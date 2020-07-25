@@ -26,15 +26,22 @@
         },
         allWhispers: function() {
             var self = this;
-            var sellers = this.isCurrencyPage ? $('.displayoffer-bottom span.right a') : $('.whisper-btn');
+            var sellers = this.isCurrencyPage ? $('#content .displayoffer .row:nth-child(2) .displayoffer-bottom .right') : $('.search-results tbody .bottom-row td:nth-child(2) .requirements ul');
 
             _.each(sellers, function(seller){
                 self.appendBlockButton(seller);
             });
         },
         appendBlockButton: function(el) {
-            var btn = '<span class="block-seller-wrapper"><a class="block-seller" href="#">Block</a></span>'
-            $(el).after(btn);
+            var btn = '<a class="block-seller" href="#">Block</a>'
+
+            if (this.isCurrencyPage) {
+                btn = `<span class="block-seller-wrapper">${btn}</span>`
+            } else {
+                btn = `<li>${btn}</li>`
+            }
+
+            $(el).append(btn);
         },
         blockUser: function(user) {
             this.usersBlocked.push(user);
@@ -47,20 +54,20 @@
         },
         hideUser: function(user) {
             if(this.isCurrencyPage) {
-                $('.displayoffer[data-ign="'+user+'"]').hide()
+                $('.displayoffer[data-username="'+user+'"]').hide()
             } else {
-                $('.search-results tbody[data-ign="'+user+'"]').hide()
+                $('.search-results tbody[data-seller="'+user+'"]').hide()
             }
         }
     }
 
     $(document).on('click', '.block-seller', function(e){
         e.preventDefault();
-        var ign = Blocker.isCurrencyPage ? $(this).parents('.displayoffer').data('ign') : $(this).parents('tbody').data('ign');
+        var seller = Blocker.isCurrencyPage ? $(this).parents('.displayoffer').data('username') : $(this).parents('tbody').data('seller');
 
-        if(ign) {
+        if(seller) {
             if(confirm('Block this seller?')) {
-                Blocker.blockUser(ign);
+                Blocker.blockUser(seller);
             }            
         }
     });
